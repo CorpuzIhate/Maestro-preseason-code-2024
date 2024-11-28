@@ -2,23 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.IntakeOutakeSub;
+import frc.robot.subsystems.IntakerSub;
 
-public class MoveIntakeArmCMD extends Command  {
-    private final IntakeOutakeSub intakeOutakeSub;
+public class MoveIntakerArmCMD extends Command  {
+    private final IntakerSub intakerSub;
     private final PIDController intakeArmPidController;
     private double intakeArmSetpoint;
 
 
-    public MoveIntakeArmCMD(IntakeOutakeSub intakeOutakeSub, double intakeArmSetpoint){
+    public MoveIntakerArmCMD(IntakerSub intakerSub, double intakeArmSetpoint){
         this.intakeArmSetpoint = intakeArmSetpoint;
-        this.intakeOutakeSub = intakeOutakeSub;
-        this.intakeArmPidController = intakeOutakeSub.intakeArmPidController;
-       // intakeArmPidController.setSetpoint(intakeArmSetpoint);
+        this.intakerSub = intakerSub;
+        this.intakeArmPidController = intakerSub.intakeArmPidController;
 
-
-        addRequirements(intakeOutakeSub);
+        addRequirements(intakerSub);
  
 
     }
@@ -35,7 +32,7 @@ public class MoveIntakeArmCMD extends Command  {
 
     @Override
     public void execute() {
-        intakeOutakeSub.setIntakeArmMotorSetpoint(intakeArmSetpoint); 
+        intakerSub.setIntakeArmMotorSetpoint(intakeArmSetpoint); 
         //input a RAW setpoint into IntakeArmSetpoint
 
     }
@@ -44,7 +41,7 @@ public class MoveIntakeArmCMD extends Command  {
     public void end(boolean interrupted) {
         System.out.println("MoveIntakeArmCMD ended!");
         //intakeOutakeSub.setIntakeArmMotorSetpoint(intakeArmSetpoint); 
-        intakeOutakeSub.setIntakeArmMotorSpeed0();
+        intakerSub.setIntakeArmMotorSpeed0();
         // intakeOutakeSub.setIntakeArmMotor(0); //defaults end to set motors to 0
     }
     @Override

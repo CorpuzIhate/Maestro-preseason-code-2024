@@ -5,11 +5,11 @@ import frc.robot.subsystems.ShooterSub;
 
 public class ShooterCMD extends Command  {
     private final ShooterSub shooterSub;
-    private final boolean shooterBool;
+    private final double shooterSpeed;
 
-    public ShooterCMD(ShooterSub shooterSub,boolean shooterBool){
+    public ShooterCMD(ShooterSub shooterSub, double shooterSpeed){
         this.shooterSub = shooterSub;
-        this.shooterBool = shooterBool;
+        this.shooterSpeed = shooterSpeed;
 
 
     }
@@ -21,12 +21,12 @@ public class ShooterCMD extends Command  {
 
     @Override
     public void execute() {
-        shooterSub.setShooterSpeed(shooterBool);
+        shooterSub.setShooterSpeed(shooterSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
         System.out.println("Shootercmd ended!");
-        shooterSub.setShooterSpeed(false); //defaults end to set motors to 0
+        shooterSub.setShooterSpeed(0); //defaults end to set motors to 0
     }
 }

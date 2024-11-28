@@ -4,38 +4,32 @@
 
 package frc.robot;
 
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.Constants.ShooterConstants;
+
 import frc.robot.commands.IndexerCMD;
-import frc.robot.commands.IntakeCMD;
-import frc.robot.commands.LockOnCMD;
-import frc.robot.commands.MoveIntakeArmCMD;
+import frc.robot.commands.IntakerCMD;
+import frc.robot.commands.MoveIntakerArmCMD;
 import frc.robot.commands.ResetHeadingCMD;
 import frc.robot.commands.ShooterCMD;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IndexerSub;
-import frc.robot.subsystems.IntakeOutakeSub;
+import frc.robot.subsystems.IntakerSub;
 import frc.robot.subsystems.LimeLightSub;
 import frc.robot.subsystems.ShooterSub;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.SwerveSub;
 
-import java.nio.file.Path;
-
-import org.ietf.jgss.Oid;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 /**
@@ -46,43 +40,47 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+  public final CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kDriverControllerPort);
 
   private final SwerveSub swerveSub =  new SwerveSub();
   private final LimeLightSub limeLightSub = new LimeLightSub();
-  private final IntakeOutakeSub intakeOutakeSub = new IntakeOutakeSub();
+  private final IntakerSub intakeOutakeSub = new IntakerSub();
   private final ShooterSub shooterSub = new ShooterSub();
-
-  private final LockOnCMD lockOnCMD = new LockOnCMD(swerveSub, limeLightSub);
-
   private final IndexerSub indexerSub = new IndexerSub();
 
   private final Joystick driverJoyStick = new Joystick(OIConstants.kDriverControllerPort);
 
-  private final JoystickButton FieldOrientButton = new JoystickButton(driverJoyStick, OIConstants.kDriverFieldOrientedButtonIdx);
-  private final JoystickButton LimelightOrientButton = new JoystickButton(driverJoyStick, OIConstants.kDriveLimeOrientButtonIdx);
+
+  private final Trigger indexOutTrigger  = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.1);
+  private final Trigger indexInTrigger  = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.1);
+
   //autos
 
+  private AutoSelector autoSelector = new AutoSelector(this);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    SmartDashboard.putData("gyro Reset?", new InstantCommand(() -> swerveSub.zeroHeading()) );
     
-    
+    ShuffleboardTab mainTab = Shuffleboard.getTab("Main");
+    mainTab.add("autoMode", autoSelector.getAutoChooser()).withSize(2,1)
+    .withPosition(0, 0);
 
-    // Configure the trigger bindings
-    // swerveSub.setDefaultCommand(new SwerveJoystickCmd(
-    //   swerveSub, limeLightSub,
-    //   () -> -driverJoyStick.getRawAxis(OIConstants.kDriverYAxis),
-    //   () -> driverJoyStick.getRawAxis(OIConstants.kDriverXAxis),
-    //   () -> driverJoyStick.getRawAxis(OIConstants.kDriverRotAxis),
-    //   () -> !driverJoyStick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx),
-    //   () -> !driverJoyStick.getRawButton(OIConstants.kDriveLimeOrientButtonIdx))); // by defualt will work on fields reference frame
+
+
+    //Configure the trigger bindings
+    swerveSub.setDefaultCommand(new SwerveJoystickCmd(
+      swerveSub, limeLightSub,
+      () -> OIConstants.kDriverYAxisInversion * driverJoyStick.getRawAxis(OIConstants.kDriverYAxis),
+      () -> OIConstants.kDriverXAxisInversion * driverJoyStick.getRawAxis(OIConstants.kDriverXAxis),
+      () -> OIConstants.kDriverRotAxisInversion * driverJoyStick.getRawAxis(OIConstants.kDriverRotAxis),
+      () -> driverJoyStick.getRawButton(OIConstants.kLimeLightOrientButton),
+      () -> !driverJoyStick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx))); // by defualt will work on fields reference frame
     
-    intakeOutakeSub.setDefaultCommand(new IntakeCMD(intakeOutakeSub, false, false)); //needs outake and intake bool -> both false to default the motors to 0
+    //intakeOutakeSub.setDefaultCommand(new IntakeCMD(intakeOutakeSub, false, false)); //needs outake and intake bool -> both false to default the motors to 0
     
     // indexerSub.setDefaultCommand(new IndexerCMD(indexerSub,  () -> driverJoyStick.getRawAxis(OIConstants.kDriverIndexerIntakeAxis)));
 
@@ -103,30 +101,63 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
    
-   new JoystickButton(driverJoyStick, OIConstants.kDriveIntakeButtonIdx).whileTrue(new IntakeCMD(intakeOutakeSub, true, false));
-   new JoystickButton(driverJoyStick, OIConstants.kDriveOutakeButtonIdx).whileTrue(new IntakeCMD(intakeOutakeSub, false, true));
-   new JoystickButton(driverJoyStick, OIConstants.kDriveShooterButtonIdx).whileTrue(new ShooterCMD(shooterSub,  true));
-
-   new JoystickButton(driverJoyStick, 1).whileTrue(new IndexerCMD(indexerSub,  0.7));
-    new JoystickButton(driverJoyStick, 2).whileTrue(new IndexerCMD(indexerSub,  -0.7));
 
 
-  //  new JoystickTrigger(driverJoyStick, OIConstants.kIndexerButtonIdx).whileTrue(new IndexerCMD(indexerSub, 0));
-
+  //Reset Gyro
    new JoystickButton(driverJoyStick, OIConstants.kDriveGyroResetButtonIdx).whileTrue(new ResetHeadingCMD(swerveSub));
+   
 
-      //move arm to position
 
-   // currentIntakeArmPosSetpoint
+  //SHOOTER ACTIONS
+
+
+  //Shooter Out
+   new JoystickButton(driverJoyStick, OIConstants.kDriveShooterOutButtonIdx).whileTrue(new ShooterCMD(shooterSub,  
+   ShooterConstants.kShooterOutakeSpeed));
+
+  //Shooter in (Collecting from Source)
+   new JoystickButton(driverJoyStick, OIConstants.kDriveShooterInButtonIdx).whileTrue(new ShooterCMD(shooterSub,  
+   ShooterConstants.kShooterIntakeSpeed));
+   //Index In tied to same button
+   new JoystickButton(driverJoyStick, OIConstants.kDriveShooterInButtonIdx).whileTrue(new IndexerCMD(indexerSub, IndexerConstants.kUpperMotorIndexerShooterInSpeed, IndexerConstants.kLowerMotorIndexerShooterInSpeed));
+   
+
+
+  //INDEXER ACTIONS
+
+
+  //Indexer Out
+  indexOutTrigger.whileTrue(new IndexerCMD(indexerSub, IndexerConstants.kUpperMotorIndexerOutSpeed, IndexerConstants.kLowerMotorIndexerOutSpeed));
+
+  //Indexer In
+  indexInTrigger.whileTrue(new IndexerCMD(indexerSub, IndexerConstants.kUpperMotorIndexerInSpeed, IndexerConstants.kLowerMotorIndexerInSpeed));
+
+
+
+  //INTAKER ACTIONS
+
+
+  //Intaker In
+  new JoystickButton(driverJoyStick,OIConstants.kIntakeButtonIdx ).whileTrue(new IntakerCMD(intakeOutakeSub, true, false));
+
+  //Intaker Out
+  new JoystickButton(driverJoyStick,OIConstants.kOutakeIntakerButtonIdx ).whileTrue(new IntakerCMD(intakeOutakeSub, false, true));
+
+
+
+  //INTAKER ARM ACTIONS
+
+
+  //Move Intaker Arm Up
    new JoystickButton(driverJoyStick, OIConstants.kMoveIntakeArmToUpPosButtonIdx)
-   .onTrue(new MoveIntakeArmCMD(intakeOutakeSub, IntakeConstants.kIntakeArmUpPosSetpoint)); // button 7
+   .onTrue(new MoveIntakerArmCMD(intakeOutakeSub, IntakeConstants.kIntakeArmUpPosSetpoint)); // button 7
   
+  //Move Intaker Arm Down
    new JoystickButton(driverJoyStick, OIConstants.kMoveIntakeArmToDownPosButtonIdx)
-   .onTrue(new MoveIntakeArmCMD(intakeOutakeSub, IntakeConstants.kIntakeArmDownPosSetpoint));
+   .onTrue(new MoveIntakerArmCMD(intakeOutakeSub, IntakeConstants.kIntakeArmDownPosSetpoint));
 
-   new JoystickButton(driverJoyStick, OIConstants.kMoveIntakeArmToMidPosButtonIdx)
-   .onTrue(new MoveIntakeArmCMD(intakeOutakeSub,IntakeConstants.kIntakeArmMidPosSetpoint)); // button 9
-    
+
+  
   }
 
   /**
@@ -134,20 +165,26 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
+  
+  public Command getAutonomousCommand() { 
 
+    return autoSelector.getAutoChooser().getSelected();
 
-    //PathPlannerPath path =  PathPlannerPath.fromPathFile("test"); // wil run the auto named
-    // test in the pathPlanner GUI
+  }
 
-    //return AutoBuilder.followPath(path);
-
-
-
-    return new PathPlannerAuto("test_2024_02_29");
-
-
-  // return new PathPlannerAuto("test");
+  public SwerveSub getSwerveSub(){
+    return swerveSub;
+  }
+  public ShooterSub getShooterSub(){
+    return shooterSub;
+  }
+  public IndexerSub getIndexerSub(){
+    return indexerSub;
+  }
+  public IntakerSub getIntakeOutakeSub(){
+    return intakeOutakeSub;
+  }
+  public LimeLightSub getliLimeLightSub(){
+    return limeLightSub;
   }
 }

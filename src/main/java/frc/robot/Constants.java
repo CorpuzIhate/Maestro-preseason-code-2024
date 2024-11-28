@@ -24,17 +24,18 @@ public final class Constants {
     public static final double kWheelDiameterMeters = Units.inchesToMeters(4);    
     public static final double kDriveMotorGearRatio = 6.75 / 1;
     public static final double kTurningMotorGearRatio = 12.8/1.0;
-    public static final double kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameterMeters;
+    public static final double kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameterMeters; 
+    // I want to divide  10 ^^
     public static final double kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI;
     public static final double kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60;
     public static final double kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60;
-    public static final double kTurning = 0.25; //changed from 0.5
+    public static final double kTurning = 0.4; 
   }
    public static final class DriveConstants {
 
-        public static final double kTrackWidth = Units.inchesToMeters(19.75); //changed
+        public static final double kTrackWidth = Units.inchesToMeters(19.75);
         // Distance between right and left wheels
-        public static final double kWheelBase = Units.inchesToMeters(26.5); //changed
+        public static final double kWheelBase = Units.inchesToMeters(26.5);
         // Distance between front and back wheels
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
@@ -74,16 +75,16 @@ public final class Constants {
         public static final boolean kFrontRightDriveAbsoluteEncoderReversed = false;
         public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
 
-        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 2.2242;
-        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = -2.03575;
-        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = -1.7908;
-        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = -2.1488 ;
+        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 2.212;
+        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad =  1.395;
+        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = -1.872;
+        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 0.584;
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
 
-        public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond / 3;
-        public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
+        public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond / 1.15;
+        public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond / 3;
         public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
     }
@@ -93,51 +94,66 @@ public final class Constants {
         public static final int kDriverXAxis = 0;
         public static final int kDriverYAxis = 1;
         public static final int kDriverRotAxis = 4;
+
+        // -1 = Inverted
+        public static final double kDriverXAxisInversion = 1;
+        public static final double kDriverYAxisInversion = -1;
+        public static final double kDriverRotAxisInversion = 1;
+
+
+        public static final int kIndexerAxis = 3;
+        public static final int kIntakeAxis = 4;
       
-        public static final int kDriverIndexerIntakeAxis = 2; 
-        public static final int kDriverIndexerOutakeAxis = 3; 
+        public static final int kIntakeButtonIdx = 6;
 
+        public static final int kOutakeIntakerButtonIdx = 8; 
+        
 
-        public static final int kDriverFieldOrientedButtonIdx = 1;
+        public static final int kDriverFieldOrientedButtonIdx = 7;
 
-        public static final int kDriveGyroResetButtonIdx = 2;
+        public static final int kDriveGyroResetButtonIdx = 9;
+        public static final int kLimeLightOrientButton = 1;
       
-        public static final int kDriveIntakeButtonIdx = 3;
-        public static final int kDriveOutakeButtonIdx = 4;
-        public static final int kDriveLimeOrientButtonIdx = 5;
-        public static final int kDriveShooterButtonIdx = 6;
+   
+        public static final int kDriveShooterOutButtonIdx = 5;
+        public static final int kDriveShooterInButtonIdx = 2;
+        public static final int kMoveIntakeArmToUpPosButtonIdx  = 4;
+        public static final int kMoveIntakeArmToDownPosButtonIdx  = 3;
 
-        public static final int kMoveIntakeArmToUpPosButtonIdx  = 7;
-        public static final int kMoveIntakeArmToDownPosButtonIdx  = 8;
-        public static final int kMoveIntakeArmToMidPosButtonIdx  = 9;
-
-        public static final int kIndexerButtonIdx  = 1;// temperory value not FINAL
+        //Trigger needs to be pressed more than deadband to activate the indexer CMDs
+        public static final double kIndexerTriggerDeadband = 0.1;
 
 
 
-        public static final double kDeadband = 0.5;
+
+        public static final double kSwerveSpeedsDeadband = 0.1;
 
 
     }
 
     public static final class IntakeConstants {
-      public static final double kIntakeSpeed = 0.5;
+      public static final double kIntakeSpeed = 0.35;
       public static final int kIntakeMotorID = 9;
+      
       public static final int kLeftIntakeArmMotorID = 11;
       public static final int kRightIntakeArmMotorID = 12;
       public static final int kIntakeArmEncoderPort = 0; //DIO port; White Red Black (white closest to RIO)
 
       public static final int kThroughBoreEncoderTicks = 8192;
-      public static final double kIntakeArmDownPosSetpoint = 0.52;
-      public static final double kIntakeArmMidPosSetpoint = 0.65;
-      public static final double kIntakeArmUpPosSetpoint = 0.65;
-    
-      public static final double kIntakeArmMaxSpeed = 0.7; //(x percent speed)
+      public static final double kIntakeArmDownPosSetpoint = 0.76; // 0.765 2024-03-22 5:23pm
+      public static final double kIntakeArmUpPosSetpoint = 0.612;    // 0.6 2024-03-22 5:23pm
     
 
-      public static final double kArmP = 0.8;
-      public static final double kArmI = 0;
+      // MUST BE POSITIVE!!
+      public static final double kIntakeArmMaxUpSpeed = 0.4; //(x percent speed)
+      public static final double kIntakeArmMaxDownSpeed = 0.13; //(x percent speed)
+      //
+
+      public static final double kArmP = 5;
+      
+      public static final double kArmI = 0.1;
       public static final double kArmD = 0;
+
 
 
 
@@ -145,53 +161,100 @@ public final class Constants {
     public static final class ShooterConstants{
       public static final int kUpperShooterMotorID = 14;
       public static final int kLowerShooterPort = 13;
-      public static final double kShooterSpeed = 1;
+      public static final double kShooterOutakeSpeed = 1;
+      public static final double kShooterIntakeSpeed = -0.2;
+    
+      
+    }
+    public static final class  shooterArmConstants {
+        public static final double kShooterArmGearRatio =  1 / 125;
+        public static final int kShooterEncoderPort = 1;
+
     
       
     }
     public static final class AutoConstants {
-      public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 6;
+      public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 2;
       public static final double kMaxAngularSpeedRadiansPerSecond = //
               DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
       public static final double kMaxAccelerationMetersPerSecondSquared = 3;
       public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-      public static final double kPXController = 1.5;
-      public static final double kPYController = 1.5;
-      public static final double kPThetaController = 3;
+      public static final double kPXController = 0.5;
+      public static final double kPYController = 0.5;
+      public static final double kPThetaController = 0.5;
 
       public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
               new TrapezoidProfile.Constraints(
                       kMaxAngularSpeedRadiansPerSecond,
                       kMaxAngularAccelerationRadiansPerSecondSquared);
+
+
+
+    //Custom Auto
+    public static final double kDriveAutoP = 0.3;                      
+    public static final double kDriveAutoI = 0;   
+    public static final double kDriveAutoD = 0;  
+    
+    public static final double kTurningAutoP = 0.3;
+    public static final double kTurningAutoI = 0;
+    public static final double kTurningAutoD = 0;
+
   }
 
   public static class LimeLightConsants{
 
     public static final double Kp = -0.1f;
 
-    public static final double minCommand = 0.05f;
+    public static final double kminCommand = 0.05f;
+    public static final double kLimelightAngleDeadband = 1;
+    public static final double kMinShoot = 24;
+    public static final double kMaxShoot = 31;
+
+    public static final double kLimelightThetaControllerP = 0.1;
+    public static final double kLimelightThetaControllerI = 0.01;
+    public static final double kLimelightThetaControllerD = 0;
+    
+    public static final double kLimelightDistanceControllerP = 0.1;
+    public static final double kLimelightDistanceControllerI = 0.01;
+    public static final double kLimelightDistanceControllerD = 0;
+    public static final double kTyOffset = 5;
+
+
 
     
     //d = (h2-h1) / tan(a1+a2)
 
 
     // how many degrees back is your limelight rotated from perfectly vertical?
-    public static final double limelightMountAngleDegrees = 25.0; //a1
+    public static final double limelightMountAngleDegrees = 48.0; //a1
 
     // distance from the center of the Limelight lens to the floor
-    public static double limelightLensHeightInches = 20.0;  //h1
+    public static double limelightLensHeightInches = 19.5;  //h1
 
     // distance from the target to the floor
-    public static double goalHeightInches = 60.0; // h2 
+    public static double goalHeightInches = 56.375; // h2 
 
 
 
 
   }
   public static class IndexerConstants {
-    public static final int kIndexerPWMPort = 2;
 
+     /* Lower Indexer Motor is the Redline that controls orange 4" wheels
+     * 
+     * Upper Indexer Motor is Neo550 that controls black 2" wheels
+     */
+    public static final int kLowerIndexerPWMPort = 2;
+    public static final int kUpperIndexerID = 16;
   
+    public static final double kUpperMotorIndexerOutSpeed = -1;
+    public static final double kLowerMotorIndexerOutSpeed = -0.5;
+
+    public static final double kUpperMotorIndexerInSpeed = 1;
+    public static final double kLowerMotorIndexerInSpeed = 0.5;
+
+    public static final double kUpperMotorIndexerShooterInSpeed = 0.25;
+    public static final double kLowerMotorIndexerShooterInSpeed = 0;
     
   }
 }

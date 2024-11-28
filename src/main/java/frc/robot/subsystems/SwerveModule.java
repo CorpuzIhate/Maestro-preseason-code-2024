@@ -1,10 +1,7 @@
 package frc.robot.subsystems; 
-import org.opencv.core.Mat;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.google.flatbuffers.Table;
-import com.revrobotics.AnalogInput;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -13,10 +10,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.RobotController;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.commands.SwerveJoystickCmd;
+
 import frc.robot.Constants.DriveConstants;
 
 
@@ -119,6 +116,21 @@ public class SwerveModule {
 
 
     }
+
+    public void setDriveMotor(double speed){
+
+
+        driveMotor.set(speed);
+        // turningMotor.set(turningPidController.calculate(getDrivePostion(),0));
+
+
+    }
+    public void setMotor(double driveSpeed, double turningSpeed)
+    {
+        driveMotor.set(driveSpeed);
+        turningMotor.set(turningSpeed);
+    }
+
     public void stop(){
         driveMotor.set(0);
         turningMotor.set(0);

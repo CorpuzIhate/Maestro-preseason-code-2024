@@ -1,22 +1,22 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSub;
-import frc.robot.subsystems.IntakeOutakeSub;
 
 
 public class IndexerCMD extends Command {
     private final IndexerSub indexerSub;
-    private final double indexerSpeed;
+    private final double upperIndexerSpeed;
+    private final double lowerIndexSpeed;
 
 
 
 
-    public IndexerCMD(IndexerSub indexerSub, double indexerSpeed ){
+    public IndexerCMD(IndexerSub indexerSub, double upperIndexerSpeed, double lowerIndexSpeed ){
         this.indexerSub = indexerSub;
-        this.indexerSpeed = indexerSpeed;
+        this.upperIndexerSpeed = upperIndexerSpeed;
+        this.lowerIndexSpeed = lowerIndexSpeed;
 
         addRequirements(indexerSub);
     }
@@ -28,7 +28,7 @@ public class IndexerCMD extends Command {
 
     @Override
     public void execute() {
-        indexerSub.setIndexSpeed(indexerSpeed * 0.5);
+        indexerSub.setIndexSpeed(lowerIndexSpeed , upperIndexerSpeed );
     }
 
 
@@ -38,7 +38,8 @@ public class IndexerCMD extends Command {
     }
     @Override
     public void end(boolean interrupted) {
-        indexerSub.setIndexSpeed(0); //defaults end to set motors to 0
+        indexerSub.setIndexSpeed(0 , 0); //defaults end to set motors to 0
+        
     }
 }
 

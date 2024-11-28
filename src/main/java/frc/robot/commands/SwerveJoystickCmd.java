@@ -9,7 +9,9 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.SwerveSub;
@@ -25,8 +27,8 @@ public class SwerveJoystickCmd extends Command {
       public final Supplier<Double> ySpdFunction;
       public final Supplier<Double> turningSpdFunction;
       public final Supplier<Boolean> fieldOrientedFunction;
+      public final Supplier<Boolean> limeLightOrientFunction;
       private final SlewRateLimiter xLimiter, yLimiter, turningLimiter; // slew rate limiter cap the the amount of change of a value
-      public final Supplier<Boolean> limeTargetAccessed;
       
       public static double CurrentXSpeed;
       public static double CurrentYSpeed;
@@ -36,14 +38,15 @@ public class SwerveJoystickCmd extends Command {
   public SwerveJoystickCmd(
           SwerveSub swerveSubsystem, LimeLightSub limeLightSub,
           Supplier <Double> xSpdFunction, Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
-          Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> limeTargetAccessed) { // Supplier<Boolean> limeTargetAccessed//
+          Supplier<Boolean> limeLightOrientFunction, Supplier<Boolean> fieldOrientedFunction) { // Supplier<Boolean> limeTargetAccessed//
         this.swerveSubsystem = swerveSubsystem;
         this.limeLightSub = limeLightSub;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
+        this.limeLightOrientFunction =  limeLightOrientFunction;
         this.fieldOrientedFunction = fieldOrientedFunction;
-        this.limeTargetAccessed = limeTargetAccessed;
+        
 
 
         this.xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
@@ -67,10 +70,10 @@ public class SwerveJoystickCmd extends Command {
     double yspeed = ySpdFunction.get();
     double turningSpeed = turningSpdFunction.get();
     
-    //now apply deband,  if joystick doesnt center back to exactly zero, it still stops
-    xspeed = Math.abs(xspeed) > OIConstants.kDeadband ? xspeed : 0.0;
-    yspeed = Math.abs(yspeed) > OIConstants.kDeadband ? yspeed : 0.0;
-    turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
+    //now apply deband, if joystick doesnt center back to exactly zero, it still stops
+    xspeed = Math.abs(xspeed) > OIConstants.kSwerveSpeedsDeadband ? xspeed : 0.0;
+    yspeed = Math.abs(yspeed) > OIConstants.kSwerveSpeedsDeadband ? yspeed : 0.0;
+    turningSpeed = Math.abs(turningSpeed) > OIConstants.kSwerveSpeedsDeadband ? turningSpeed : 0.0;
 
     // allows for violent joystick movements to be more smooth
 
@@ -82,15 +85,17 @@ public class SwerveJoystickCmd extends Command {
     //select orintatin of robot
 
     ChassisSpeeds chassisSpeeds;
-     if(fieldOrientedFunction.get()){ // field orientations
+    SmartDashboard.putBoolean("LL Orient Function", limeLightOrientFunction.get());
+
+     if(fieldOrientedFunction.get() && !limeLightOrientFunction.get()){ // field orientations
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
           xspeed, -yspeed, -turningSpeed, swerveSubsystem.getRotation2d());
 
-      }
-    else if(limeTargetAccessed.get()){//limelight target oriented
-       turningSpeed = limeLightSub.steerMotorToTarget(turningSpeed);
-       chassisSpeeds = new ChassisSpeeds(xspeed,-yspeed, -turningSpeed); 
     }
+     else if(limeLightOrientFunction.get()){//limelight target oriented
+        double limelightTurningSpeed = limeLightSub.getLimelightThetaPIDOutput(LimelightHelpers.getTY("limelight"));
+       chassisSpeeds = new ChassisSpeeds(xspeed,-yspeed, -limelightTurningSpeed); 
+     }
       else{ // robot oriented
       chassisSpeeds = new ChassisSpeeds(xspeed,-yspeed, -turningSpeed); //hard coded -s
       }

@@ -1,19 +1,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeOutakeSub;
+import frc.robot.subsystems.IntakerSub;
 
 
-public class IntakeCMD extends Command {
-    private final IntakeOutakeSub intakeOutakeSub;
+public class IntakerCMD extends Command {
+    private final IntakerSub intakerSub;
     private final boolean intakeBool;
     private final boolean outakeBool;
 
-    public IntakeCMD(IntakeOutakeSub intakeOutakeSub, boolean intakeBool, boolean outakeBool){
-        this.intakeOutakeSub = intakeOutakeSub;
+    public IntakerCMD(IntakerSub intakerSub, boolean intakeBool, boolean outakeBool){
+        this.intakerSub = intakerSub;
         this.intakeBool = intakeBool;
         this.outakeBool = outakeBool;
-        addRequirements(intakeOutakeSub);
+        addRequirements(intakerSub);
     }
 
     @Override
@@ -23,13 +23,13 @@ public class IntakeCMD extends Command {
 
     @Override
     public void execute() {
-        intakeOutakeSub.setIntakeSpeed(intakeBool, outakeBool);
+        intakerSub.setIntakeSpeed(intakeBool, outakeBool);
     }
 
     @Override
     public void end(boolean interrupted) {
         System.out.println("IntakeCMD ended!");
-        intakeOutakeSub.setIntakeSpeed(false, false); //defaults end to set motors to 0
+        intakerSub.setIntakeSpeed(false, false); //defaults end to set motors to 0
     }
     @Override
     public boolean isFinished(){
