@@ -6,37 +6,31 @@ package frc.robot;
 
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+
+
 import frc.robot.commands.IndexerCMD;
 import frc.robot.commands.IntakeCMD;
-import frc.robot.commands.LockOnCMD;
+
 import frc.robot.commands.MoveIntakeArmCMD;
 import frc.robot.commands.ResetHeadingCMD;
 import frc.robot.commands.ShooterCMD;
-import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.ExampleSubsystem;
+
+
 import frc.robot.subsystems.IndexerSub;
 import frc.robot.subsystems.IntakeOutakeSub;
-import frc.robot.subsystems.LimeLightSub;
+
 import frc.robot.subsystems.ShooterSub;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+
 import frc.robot.subsystems.SwerveSub;
 
-import java.nio.file.Path;
 
-import org.ietf.jgss.Oid;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
+
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,26 +40,22 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OIConstants.kDriverControllerPort);
+
+
 
   private final SwerveSub swerveSub =  new SwerveSub();
-  private final LimeLightSub limeLightSub = new LimeLightSub();
+  
   private final IntakeOutakeSub intakeOutakeSub = new IntakeOutakeSub();
   private final ShooterSub shooterSub = new ShooterSub();
 
-  private final LockOnCMD lockOnCMD = new LockOnCMD(swerveSub, limeLightSub);
+
 
   private final IndexerSub indexerSub = new IndexerSub();
 
   private final Joystick driverJoyStick = new Joystick(OIConstants.kDriverControllerPort);
 
-  private final JoystickButton FieldOrientButton = new JoystickButton(driverJoyStick, OIConstants.kDriverFieldOrientedButtonIdx);
-  private final JoystickButton LimelightOrientButton = new JoystickButton(driverJoyStick, OIConstants.kDriveLimeOrientButtonIdx);
-  //autos
+
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -91,15 +81,6 @@ public class RobotContainer {
     configureBindings();
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
    
@@ -145,7 +126,7 @@ public class RobotContainer {
 
 
 
-    return new PathPlannerAuto("test_2024_02_29");
+    return new PathPlannerAuto("testPath_2024_11_29");
 
 
   // return new PathPlannerAuto("test");

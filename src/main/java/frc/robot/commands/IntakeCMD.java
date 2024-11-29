@@ -18,7 +18,7 @@ public class IntakeCMD extends Command {
 
     @Override
     public void initialize(){
-        System.out.println("IntakeCMD started!");
+   
     }
 
     @Override
@@ -28,7 +28,7 @@ public class IntakeCMD extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("IntakeCMD ended!");
+        
         intakeOutakeSub.setIntakeSpeed(false, false); //defaults end to set motors to 0
     }
     @Override

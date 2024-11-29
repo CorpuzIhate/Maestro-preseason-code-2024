@@ -5,10 +5,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
+
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeOutakeSub extends SubsystemBase {
@@ -20,7 +20,7 @@ public class IntakeOutakeSub extends SubsystemBase {
     private CANSparkMax rightIntakeArmMotor = new CANSparkMax(IntakeConstants.kRightIntakeArmMotorID, MotorType.kBrushless);
 
     private DutyCycleEncoder intakeArmEncoder = new DutyCycleEncoder(IntakeConstants.kIntakeArmEncoderPort);
-    private double debugintakeArmSetpoint = 0;
+
     public void IntakeSub(){
     }
 
@@ -40,7 +40,7 @@ public class IntakeOutakeSub extends SubsystemBase {
     }
     public void setIntakeArmMotorSetpoint (double intakeArmSetpoint){
 
-        debugintakeArmSetpoint = intakeArmSetpoint;
+
         intakeArmPidController.setSetpoint(intakeArmSetpoint);
         // sets the setpoint in the PID  Controller
 
@@ -61,10 +61,7 @@ public class IntakeOutakeSub extends SubsystemBase {
     public void periodic(){
         /// telmetry
 
-        SmartDashboard.putNumber("IntakeArmPos", intakeArmEncoder.get());
-        SmartDashboard.putNumber("IntakeArmAbsPos", intakeArmEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber("IntakeArmPower", rightIntakeArmMotor.getAppliedOutput());
-        SmartDashboard.putNumber("IntakeDesired", intakeArmPidController.getSetpoint());
+
 
 
         //Debug Setpoint
